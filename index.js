@@ -1,15 +1,13 @@
 import * as monaco from 'monaco-editor'
-import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import { configureMonacoYaml } from 'monaco-yaml'
-import YamlWorker from 'monaco-yaml/yaml.worker?worker'
 
 window.MonacoEnvironment = {
   getWorker(moduleId, label) {
     switch (label) {
       case 'editorWorkerService':
-        return new EditorWorker()
+        return new Worker(new URL('monaco-editor/esm/vs/editor/editor.worker.js', import.meta.url), {type: 'module'})
       case 'yaml':
-        return new YamlWorker()
+        return new Worker(new URL('./yaml.worker.js', import.meta.url), {type: 'module'})
       default:
         throw new Error(`Unknown label ${label}`)
     }
@@ -45,8 +43,6 @@ configureMonacoYaml(monaco, {
           }
         }
       },
-      // And the following URI will be linked to as the source.
-      uri: 'https://github.com/remcohaszing/monaco-yaml#usage'
     }
   ]
 })
